@@ -4,7 +4,7 @@
  */
 package model;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 /**
  *
@@ -15,13 +15,13 @@ public class Persona {
     private String apellidos; 
     private String cedula; 
     private String nacionalidad;
-    private LocalDate fechaNacimiento;
+    private Date fechaNacimiento;
 
     public Persona() {
     }
     
 
-    public Persona(String nombres, String apellidos, String cedula, String nacionalidad, LocalDate fechaNacimiento) {
+    public Persona(String nombres, String apellidos, String cedula, String nacionalidad, Date fechaNacimiento) {
         this.nombres = nombres;
         this.apellidos = apellidos;
         this.cedula = cedula;
@@ -88,14 +88,14 @@ public class Persona {
     /**
      * @return the fechaNacimiento
      */
-    public LocalDate getFechaNacimiento() {
+    public Date getFechaNacimiento() {
         return fechaNacimiento;
     }
 
     /**
      * @param fechaNacimiento the fechaNacimiento to set
      */
-    public void setFechaNacimiento(LocalDate fechaNacimiento) {
+    public void setFechaNacimiento(Date fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
     }
     

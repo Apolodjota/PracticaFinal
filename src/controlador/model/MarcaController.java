@@ -49,6 +49,12 @@ public class MarcaController extends DataAccessObject<Marca> {
         return this.save(marca);
     }
 
+    @Override
+    public String toString() {
+        return marca.getId() +".- "+  marca.getNombre();
+    }
+    
+    
     /**
      * @param marca the marca to set
      */
@@ -63,7 +69,7 @@ public class MarcaController extends DataAccessObject<Marca> {
 //        mc.save();
 //        System.out.println(mc.listAll().print());
 //        mc.setMarca(null);
-        
+//        
 //        mc.getMarca().setId(mc.generated_ID());
 //        mc.getMarca().setNombre("JAC");
 //        mc.getMarca().setEstado(true);

@@ -5,6 +5,8 @@
 package model;
 
 import controlador.ListaEnlazada;
+import controlador.util.Utilidades;
+import java.util.Date;
 
 /**
  *
@@ -15,18 +17,21 @@ public class Venta {
     private String codigo;
     private Double total;
     private Integer id_AgenteVenta;
+    private Date fecha;
     private ListaEnlazada<Auto> autosVenderan;
 
     public Venta() {
     }
 
-    public Venta(Integer id, String codigo, Double total, Integer id_AgenteVenta, ListaEnlazada<Auto> autosVenderan) {
+    public Venta(Integer id, String codigo, Double total, Integer id_AgenteVenta, Date fecha, ListaEnlazada<Auto> autosVenderan) {
         this.id = id;
         this.codigo = codigo;
         this.total = total;
         this.id_AgenteVenta = id_AgenteVenta;
+        this.fecha = fecha;
         this.autosVenderan = autosVenderan;
     }
+    
 
     /**
      * @return the id
@@ -98,6 +103,56 @@ public class Venta {
      */
     public void setCodigo(String codigo) {
         this.codigo = codigo;
+    }
+
+    /**
+     * @return the fecha
+     */
+    public Date getFecha() {
+        return fecha;
+    }
+
+    /**
+     * @param fecha the fecha to set
+     */
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
+    }
+    @Override
+    public String toString() {
+        return id + " _ " + codigo + "   En la fecha: " + Utilidades.toFormatoFecha(fecha) + " total:" + total;
+    }
+
+    public Boolean comparar(Venta v, String field, Integer type) {
+        switch (type) {
+            case 1:
+                if (field.equalsIgnoreCase("id")) {
+                    return getId().intValue() > v.getId().intValue();
+                } else if (field.equalsIgnoreCase("codigo")) {
+                    return getCodigo().compareTo(v.getCodigo()) > 0;
+                } else if (field.equalsIgnoreCase("total")) {
+                    return getTotal().doubleValue() > v.getTotal().doubleValue();
+                } else if (field.equalsIgnoreCase("id_AgenteVenta")) {
+                    return getId_AgenteVenta().intValue() > v.getId_AgenteVenta().intValue();
+                } else if (field.equalsIgnoreCase("fecha")) {
+                    return getFecha().after(v.getFecha());
+                }
+            case 0:
+                if (field.equalsIgnoreCase("id")) {
+                    return getId().intValue() < v.getId();
+                } else if (field.equalsIgnoreCase("codigo")) {
+                    return getCodigo().compareTo(v.getCodigo()) < 0;
+                } else if (field.equalsIgnoreCase("total")) {
+                    return getTotal().doubleValue() < v.getTotal().doubleValue();
+                } else if (field.equalsIgnoreCase("id_AgenteVenta")) {
+                    return getId_AgenteVenta().intValue() < v.getId_AgenteVenta().intValue();
+                } else if (field.equalsIgnoreCase("fecha")) {
+                    return getFecha().before(v.getFecha());
+                }
+            default:
+                return null;
+        }
+        
     }
 
     

@@ -4,7 +4,7 @@
  */
 package model;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 /**
  *
@@ -16,7 +16,7 @@ public class AgenteVentas extends Persona {
     public AgenteVentas() {
     }
     
-    public AgenteVentas(Integer id, String nombres, String apellidos, String cedula, String nacionalidad, LocalDate fechaNacimiento) {
+    public AgenteVentas(Integer id, String nombres, String apellidos, String cedula, String nacionalidad, Date fechaNacimiento) {
         super(nombres, apellidos, cedula, nacionalidad, fechaNacimiento);
         this.id = id;   
     }

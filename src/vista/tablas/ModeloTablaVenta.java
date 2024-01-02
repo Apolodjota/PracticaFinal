@@ -6,6 +6,7 @@ package vista.tablas;
 
 import controlador.ListaEnlazada;
 import controlador.exceptions.VacioException;
+import controlador.util.Utilidades;
 import javax.swing.table.AbstractTableModel;
 import model.Venta;
 
@@ -21,7 +22,7 @@ public class ModeloTablaVenta extends AbstractTableModel{
     }
 
     public int getColumnCount() {
-        return 3;    
+        return 5;    
     }
 
     public Object getValueAt(int i, int j) {
@@ -33,11 +34,15 @@ public class ModeloTablaVenta extends AbstractTableModel{
         }
         switch (j) {
             case 0:
-                return (venta != null) ? venta.getCodigo(): "";
+                return (venta != null) ? venta.getId(): "";
             case 1:
-                return (venta != null) ? venta.getTotal(): "";
+                return (venta != null) ? venta.getCodigo(): "";
             case 2:
+                return (venta != null) ? venta.getTotal(): "";
+            case 3:
                 return (venta != null) ? venta.getId_AgenteVenta().toString(): "";
+            case 4:
+                return (venta != null) ? Utilidades.toFormatoFecha(venta.getFecha()) : "";
             default:
                 return null;
         }
@@ -46,11 +51,15 @@ public class ModeloTablaVenta extends AbstractTableModel{
     public String getColumnName(int column) {
         switch (column) {
             case 0:
-                return "Codigo";
+                return "ID";
             case 1:
-                return "Total";
+                return "Codigo";
             case 2:
+                return "Total";
+            case 3:
                 return "Id Vendedor";
+            case 4:
+                return "Fecha";
             default:
                 return null;
         }
