@@ -258,8 +258,8 @@ public class VentaController extends DataAccessObject<Venta> {
         VentaController vc = new VentaController();
         System.out.println(vc.mergeSort(vc.getVentas(), 0, "total").print());
         long endTime = System.nanoTime();
-        long time = startTime - endTime;
-        System.out.println("Tiempo de ejecucion en nanosegundos: " + (time * -1));
-        System.out.println("Tiempo de ejecucion en milisegundos: " + ((time/1000000)*-1));
+        long time = endTime - startTime;
+        System.out.println("Tiempo de ejecucion en nanosegundos: " + time);
+        System.out.println("Tiempo de ejecucion en milisegundos: " + time/1000000);
     }
 }
