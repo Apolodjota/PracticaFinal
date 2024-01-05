@@ -9,11 +9,7 @@ import controlador.ListaEnlazada;
 import controlador.dao.DataAccessObject;
 import controlador.exceptions.VacioException;
 import controlador.util.Utilidades;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
-import javax.sound.midi.Soundbank;
 import model.Auto;
 import model.Venta;
 
@@ -68,60 +64,61 @@ public class VentaController extends DataAccessObject<Venta> {
         return lista = lista.toList(array);
     }
 
-    private void mergeSort(Venta[] array, int ini, int fin, String field, Integer type) {
+    private void mergeSort(Venta[] m, Integer ini, Integer fin, String field, Integer type) {
         if (ini < fin) {
             int medio = (ini + fin) / 2;
-            mergeSort(array, ini, medio, field, type);
-            mergeSort(array, medio + 1, fin, field, type);
-            merge(array, ini, medio, fin, field, type);
+            mergeSort(m, ini, medio, field, type);
+            mergeSort(m, medio + 1, fin, field, type);
+            merge(m, ini, medio, fin, field, type);
         }
     }
 
-    private void merge(Venta[] array, int ini, int m, int fin, String field, Integer type) {
-        int i = ini;
-        int j = m + 1;
-        int k = 0;
-        int n = fin - ini + 1;
-        Venta[] arraySec = new Venta[n];
-        while (i <= m && j <= fin) {
-            if (array[i].comparar(array[j], field, type)) {
-                arraySec[k] = array[i];
-                i++;
+    private void merge(Venta[] m, Integer ini, Integer medio, Integer fin, String field, Integer type) {
+        Integer izq = ini;
+        Integer der = medio + 1;
+        Integer k = 0;
+        Integer n = fin - ini + 1;
+        Venta[] result = new Venta[n];
+        while (izq <= medio && der <= fin) {
+            if (m[izq].comparar(m[der], field, type)) {
+                result[k] = m[izq];
+                izq++;
             } else {
-                arraySec[k] = array[j];
-                j++;
+                result[k] = m[der];
+                der++;
             }
             k++;
         }
-        while (i <= m) {
-            arraySec[k] = array[i];
-            i++;
+        while (izq <= medio) {
+            result[k] = m[izq];
+            izq++;
             k++;
         }
-        while (j <= fin) {
-            arraySec[k] = array[j];
-            j++;
+        while (der <= fin) {
+            result[k] = m[der];
+            der++;
             k++;
         }
         for (k = 0; k < n; k++) {
-            array[ini + k] = arraySec[k];
+            m[ini + k] = result[k];
         }
     }
 
     public ListaEnlazada<Venta> quickSort(ListaEnlazada<Venta> lista, Integer type, String field) {
         Venta[] m = lista.toArray();
-        Integer n = m.length - 1;
-        quickSort(m, type, field, 0, n);
+        Integer fin = m.length - 1;
+        quickSort(m, type, field, 0, fin);
         //setVentas(lista.toList(m));
         return lista = lista.toList(m);
     }
 
-    private void quickSort(Venta[] m, Integer type, String field, int inicio, int fin) {
+    private void quickSort(Venta[] m, Integer type, String field, Integer inicio, Integer fin) {
+        
         if (inicio >= fin) return;
         
         Venta pivote = m[inicio];
-        int elemIzq = inicio + 1;
-        int elemDer = fin;
+        Integer elemIzq = inicio + 1;
+        Integer elemDer = fin;
         while (elemIzq <= elemDer) {
             while (elemIzq <= fin && m[elemIzq].comparar(pivote, field, type)) {
                 elemIzq++;
@@ -153,25 +150,38 @@ public class VentaController extends DataAccessObject<Venta> {
                 result.add(m[i]);
             }
         }
-        
         return result;
     }
-//    public ListaEnlazada<Venta> binaria(ListaEnlazada<Venta> lista, String field int X, int fin, int inicio) {
-//            Venta[] m = this.quickSort(lista, 0, field).toArray();
-//            int medio;
-//            if (inicio > fin) {
-//                return -1;
-//            } else {
-//                medio = (inicio + fin) / 2;
-//                if (m[medio] > X) {
-//                    return binaria(A, X, medio + 1, fin);
-//                } else if (A[medio] > X) {
-//                    return binaria(A, X, inicio, medio - 1);
-//                } else {
-//                    return medio;
-//                }
-//            }
-//    }
+    
+    public Venta binaria(ListaEnlazada<Venta> lista, String field, String text) throws InvocationTargetException, IllegalAccessException{
+        Venta[] m = this.quickSort(lista, 0, field).toArray();
+        Integer fin = m.length - 1;
+        Integer inicio = 0;
+        Venta result = binaria(m, fin, inicio, field, text);
+        if(result != null)
+            return result;
+        else System.out.println("No se pudo encontrar na");
+        return null;
+        
+    }
+    public Venta binaria(Venta[] m, int fin, int inicio,String field, String text) throws InvocationTargetException, IllegalAccessException {
+            if (inicio > fin) {
+                return null;
+            } else {
+                Integer medio = (inicio + fin) / 2;
+                Object data = Utilidades.getData(m[medio], field);
+                System.out.println(data.toString());
+                //if(Double.parseDouble(data.toString()) == Double.parseDouble(text))
+                if (data.toString().equalsIgnoreCase(text)) {
+                    return m[medio];
+                } else 
+                    if (data.toString().compareToIgnoreCase(text) < 0) {
+                        return binaria(m,fin, medio + 1, field, text);
+                    } else {
+                        return binaria(m, medio - 1, inicio, field, text);
+                }
+            }
+    }
     public ListaEnlazada<Venta> binariaLineal(ListaEnlazada<Venta> lista, String texto, String field) throws InvocationTargetException, IllegalAccessException {
         ListaEnlazada<Venta> lo = this.quickSort(lista, 0, field);
         Venta[] m = lo.toArray();
@@ -185,6 +195,7 @@ public class VentaController extends DataAccessObject<Venta> {
         while (inicio <= fin) {
             int medio = (inicio + fin) / 2;
             Object data = Utilidades.getData(m[medio], field);
+            
             
             if (Double.parseDouble(data.toString()) == Double.parseDouble(texto)){
                 System.out.println("Hola mundo");
@@ -253,13 +264,23 @@ public class VentaController extends DataAccessObject<Venta> {
 
     public static void main(String[] args) throws InvocationTargetException, IllegalAccessException, InterruptedException {
   
-//        System.out.println(vc.binariaLineal(vc.getVentas(), "350.0", "total").print());
-        long startTime = System.nanoTime();
+////        System.out.println(vc.binariaLineal(vc.getVentas(), "350.0", "total").print());
+//        long startTime = System.nanoTime();
+//        VentaController vc = new VentaController();
+//        System.out.println(vc.mergeSort(vc.getVentas(), 0, "total").print());
+//        long endTime = System.nanoTime();
+//        long time = endTime - startTime;
+//        System.out.println("Tiempo de ejecucion en nanosegundos: " + time);
+//        System.out.println("Tiempo de ejecucion en milisegundos: " + time/1000000);
+
         VentaController vc = new VentaController();
         System.out.println(vc.mergeSort(vc.getVentas(), 0, "total").print());
-        long endTime = System.nanoTime();
-        long time = endTime - startTime;
-        System.out.println("Tiempo de ejecucion en nanosegundos: " + time);
-        System.out.println("Tiempo de ejecucion en milisegundos: " + time/1000000);
+        Venta venta = vc.binaria(vc.getVentas(), "total", "350.0");
+        if(venta != null)
+            System.out.println(venta.toString());   
+        else System.out.println("Nulo");
+            
+
+
     }
 }
