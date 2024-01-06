@@ -6,13 +6,16 @@ package model;
 
 import controlador.ListaEnlazada;
 import controlador.util.Utilidades;
+import java.lang.reflect.Field;
 import java.util.Date;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author Apolo
  */
 public class Venta {
+
     private Integer id;
     private String codigo;
     private Double total;
@@ -31,7 +34,6 @@ public class Venta {
         this.fecha = fecha;
         this.autosVenderan = autosVenderan;
     }
-    
 
     /**
      * @return the id
@@ -65,8 +67,9 @@ public class Venta {
      * @return the autosVenderan
      */
     public ListaEnlazada<Auto> getAutosVenderan() {
-        if(autosVenderan == null)
+        if (autosVenderan == null) {
             autosVenderan = new ListaEnlazada<>();
+        }
         return autosVenderan;
     }
 
@@ -83,7 +86,7 @@ public class Venta {
     public Double getTotal() {
         return total;
     }
-    
+
     /**
      * @param total the total to set
      */
@@ -118,6 +121,7 @@ public class Venta {
     public void setFecha(Date fecha) {
         this.fecha = fecha;
     }
+
     @Override
     public String toString() {
         return id + " _ " + codigo + "   En la fecha: " + Utilidades.toFormatoFecha(fecha) + " total:" + total;
@@ -152,9 +156,6 @@ public class Venta {
             default:
                 return null;
         }
-        
-    }   
-    
-    
-    
+
+    }
 }

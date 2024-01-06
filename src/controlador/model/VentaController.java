@@ -8,8 +8,8 @@ package controlador.model;
 import controlador.ListaEnlazada;
 import controlador.dao.DataAccessObject;
 import controlador.exceptions.VacioException;
-import controlador.util.Utilidades;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
 import model.Auto;
 import model.Venta;
 
@@ -113,9 +113,11 @@ public class VentaController extends DataAccessObject<Venta> {
     }
 
     private void quickSort(Venta[] m, Integer type, String field, Integer inicio, Integer fin) {
-        
-        if (inicio >= fin) return;
-        
+
+        if (inicio >= fin) {
+            return;
+        }
+
         Venta pivote = m[inicio];
         Integer elemIzq = inicio + 1;
         Integer elemDer = fin;
@@ -152,67 +154,238 @@ public class VentaController extends DataAccessObject<Venta> {
         }
         return result;
     }
-    
-    public Venta binaria(ListaEnlazada<Venta> lista, String field, String text) throws InvocationTargetException, IllegalAccessException{
-        Venta[] m = this.quickSort(lista, 0, field).toArray();
-        Integer fin = m.length - 1;
-        Integer inicio = 0;
-        Venta result = binaria(m, fin, inicio, field, text);
-        if(result != null)
-            return result;
-        else System.out.println("No se pudo encontrar na");
-        return null;
-        
-    }
-    public Venta binaria(Venta[] m, int fin, int inicio,String field, String text) throws InvocationTargetException, IllegalAccessException {
-            if (inicio > fin) {
-                return null;
-            } else {
-                Integer medio = (inicio + fin) / 2;
-                Object data = Utilidades.getData(m[medio], field);
-                System.out.println(data.toString());
-                //if(Double.parseDouble(data.toString()) == Double.parseDouble(text))
-                if (data.toString().equalsIgnoreCase(text)) {
-                    return m[medio];
-                } else 
-                    if (data.toString().compareToIgnoreCase(text) < 0) {
-                        return binaria(m,fin, medio + 1, field, text);
-                    } else {
-                        return binaria(m, medio - 1, inicio, field, text);
-                }
-            }
-    }
-    public ListaEnlazada<Venta> binariaLineal(ListaEnlazada<Venta> lista, String texto, String field) throws InvocationTargetException, IllegalAccessException {
-        ListaEnlazada<Venta> lo = this.quickSort(lista, 0, field);
+
+    public ListaEnlazada<Venta> binaria(ListaEnlazada<Venta> lista, String field, Object objeto) {
+        ListaEnlazada<Venta> lo = this.mergeSort(lista, 0, field);
+        System.out.println(lo.print());
         Venta[] m = lo.toArray();
         Integer inicio = 0;
         Integer fin = m.length - 1;
-        ListaEnlazada<Venta> result = new ListaEnlazada<>();
-        //System.out.println(Utilidades.getData(m[inicio], field));
-        //Field fiel = Utilidades.getField(lista.getClass(), field);
-        //Object type = Utilidades.getTypeField(venta.getClass(), texto);
-        //System.out.println(type.toString());
-        while (inicio <= fin) {
-            int medio = (inicio + fin) / 2;
-            Object data = Utilidades.getData(m[medio], field);
-            
-            
-            if (Double.parseDouble(data.toString()) == Double.parseDouble(texto)){
-                System.out.println("Hola mundo");
-                result.add(m[medio]);
-                break;
-            } else {
-                if (Double.parseDouble(data.toString()) > Double.parseDouble(texto)) {
-                    fin = medio - 1;
-                } else {
-                    inicio = medio + 1;
-                }
-            }
-        }
-        return result;
-    }
+        lista.clear();
+        switch (field.toLowerCase()) {
+            case "id":
+                while (inicio <= fin) {
+                    int medio = (inicio + fin) / 2;
+                    if (m[medio].getId() == Integer.parseInt(objeto.toString())) {
+                         lista.add(m[medio]);
+                         return lista;
 
-    
+                    } else {
+                        if (Integer.parseInt(objeto.toString()) < m[medio].getId()) {
+                            fin = medio - 1;
+                        } else {
+                            inicio = medio + 1;
+                        }
+                    }
+                }
+                return lista;
+
+            case "id_agenteventa":
+                while (inicio <= fin) {
+                    int medio = (inicio + fin) / 2;
+                    if (m[medio].getId_AgenteVenta()== Integer.parseInt(objeto.toString())) {
+                         lista.add(m[medio]);
+                         return lista;
+
+                    } else {
+                        if (Integer.parseInt(objeto.toString()) < m[medio].getId_AgenteVenta()) {
+                            fin = medio - 1;
+                        } else {
+                            inicio = medio + 1;
+                        }
+                    }
+                }
+                return lista;
+            case "fecha":
+                while (inicio <= fin) {
+                    int medio = (inicio + fin) / 2;
+                    System.out.println("Bucle");
+                    if (m[medio].getFecha().toString().equalsIgnoreCase(objeto.toString())) {
+                        System.out.println("Entre en medio");
+                        System.out.println(objeto.toString());
+                        lista.add(m[medio]);
+                        return lista;
+                    } else {
+                        if (m[medio].getFecha().after((Date) objeto)) {
+                            System.out.println("izquierda");
+                            fin = medio - 1;
+                        } else {
+                            System.out.println("derecha");
+                            inicio = medio + 1;
+                        }
+                    }
+                }
+                return lista;
+            case "total":
+                while (inicio <= fin) {
+                    int medio = (inicio + fin) / 2;
+
+                    if (m[medio].getTotal() == Double.parseDouble(objeto.toString())) {
+                        lista.add(m[medio]);
+                        return lista;
+                    } else {
+                        if (m[medio].getTotal() > Double.parseDouble(objeto.toString())) {
+                            fin = medio - 1;
+                        } else {
+                            inicio = medio + 1;
+                        }
+                    }
+
+                }
+            default:
+                throw new AssertionError();
+        }
+    }
+//    while (inicio <= fin) {
+//                    int medio = (inicio + fin) / 2;
+//
+//                    if (m[medio].getId() == Integer.parseInt(objeto.toString())) {
+//                        lista.add(m[medio]);
+//
+//                    } else {
+//                        if (Integer.parseInt(objeto.toString()) < m[medio].getId()) {
+//                            fin = medio - 1;
+//                        } else {
+//                            inicio = medio + 1;
+//                        }
+//                    }
+//                }
+//                return lista;
+
+    public ListaEnlazada<Venta> binariaLineal(ListaEnlazada<Venta> lista, String field, Object objeto, Integer direccion) {
+        ListaEnlazada<Venta> lo = this.mergeSort(lista, 0, field);
+        System.out.println(lo.print());
+        Venta[] m = lo.toArray();
+        Integer inicio = 0;
+        Integer fin = m.length - 1;
+        lista.clear();
+        //ListaEnlazada<Venta> result = new ListaEnlazada<>();
+        switch (field.toLowerCase()) {
+            case "id":
+                while (inicio <= fin) {
+                    int medio = (inicio + fin) / 2;
+                    if (m[medio].getId() == Integer.parseInt(objeto.toString())) {
+                        System.out.println("Entro en medio");
+                        lista.add(m[medio]);
+                        if (direccion == 0) {
+                            System.out.println("Se va hacia los mayores");
+                            for (Integer med = (medio + 1); med <= (m.length - 1); med++) {
+                                System.out.println("Esta en el indice: "+med);
+                                lista.add(m[med]);
+                            }
+                            return lista;
+                        } else {
+                            for (Integer med = (medio - 1); med >= 0; med--) {
+                                System.out.println("Esta en el indice: "+med);
+                                lista.add(m[med]);
+                            }
+                            return lista;
+                        }
+
+                    } else {
+                        if (Integer.parseInt(objeto.toString()) < m[medio].getId()) {
+                            fin = medio - 1;
+                        } else {
+                            inicio = medio + 1;
+                        }
+                    }
+                }
+                return lista;
+
+            case "id_agenteventa":
+                while (inicio <= fin) {
+                    int medio = (inicio + fin) / 2;
+
+                    if (m[medio].getId_AgenteVenta() == Integer.parseInt(objeto.toString())) {
+                        System.out.println("Entro en medio");
+                        lista.add(m[medio]);
+                        if (direccion == 0) {
+                            System.out.println("Se va hacia los mayores");
+                            for (Integer med = (medio + 1); med <= (m.length - 1); med++) {
+                                System.out.println("Esta en el indice: "+med);
+                                lista.add(m[med]);
+                            }
+                            return lista;
+                        } else {
+                            for (Integer med = (medio - 1); med >= 0; med--) {
+                                System.out.println("Esta en el indice: "+med);
+                                lista.add(m[med]);
+                            }
+                            return lista;
+                        }
+                    } else {
+                        if (m[medio].getId_AgenteVenta() > Integer.parseInt(objeto.toString())) {
+                            fin = medio - 1;
+                        } else {
+                            inicio = medio + 1;
+                        }
+                    }
+                }
+                return lista;
+            case "fecha":
+                while (inicio <= fin) {
+                    int medio = (inicio + fin) / 2;
+
+                    if (m[medio].getFecha().toString().equalsIgnoreCase(objeto.toString())) {
+                        System.out.println("Entro en medio");
+                        lista.add(m[medio]);
+                        if (direccion == 0) {
+                            System.out.println("Se va hacia los mayores");
+                            for (Integer med = (medio + 1); med <= (m.length - 1); med++) {
+                                System.out.println("Esta en el indice: "+med);
+                                lista.add(m[med]);
+                            }
+                            return lista;
+                        } else {
+                            for (Integer med = (medio - 1); med >= 0; med--) {
+                                System.out.println("Esta en el indice: "+med);
+                                lista.add(m[med]);
+                            }
+                            return lista;
+                        }
+                    } else {
+                        if (m[medio].getFecha().after((Date)objeto)) {
+                            fin = medio - 1;
+                        } else {
+                            inicio = medio + 1;
+                        }
+                    }
+                }
+                return lista;
+            case "total":
+                while (inicio <= fin) {
+                    int medio = (inicio + fin) / 2;
+
+                    if (m[medio].getTotal() == Double.parseDouble(objeto.toString())) {
+                        System.out.println("Entro en medio");
+                        lista.add(m[medio]);
+                        if (direccion == 0) {
+                            System.out.println("Se va hacia los mayores");
+                            for (Integer med = (medio + 1); med <= (m.length - 1); med++) {
+                                System.out.println("Esta en el indice: "+med);
+                                lista.add(m[med]);
+                            }
+                            return lista;
+                        } else {
+                            for (Integer med = (medio - 1); med >= 0; med--) {
+                                System.out.println("Esta en el indice: "+med);
+                                lista.add(m[med]);
+                            }
+                            return lista;
+                        }
+                    } else {
+                        if (m[medio].getTotal() > Double.parseDouble(objeto.toString())) {
+                            fin = medio - 1;
+                        } else {
+                            inicio = medio + 1;
+                        }
+                    }
+
+                }
+            default:
+                throw new AssertionError();
+        }
+    }
 
     /**
      * @return the index
@@ -263,24 +436,10 @@ public class VentaController extends DataAccessObject<Venta> {
     }
 
     public static void main(String[] args) throws InvocationTargetException, IllegalAccessException, InterruptedException {
-  
-////        System.out.println(vc.binariaLineal(vc.getVentas(), "350.0", "total").print());
-//        long startTime = System.nanoTime();
-//        VentaController vc = new VentaController();
-//        System.out.println(vc.mergeSort(vc.getVentas(), 0, "total").print());
-//        long endTime = System.nanoTime();
-//        long time = endTime - startTime;
-//        System.out.println("Tiempo de ejecucion en nanosegundos: " + time);
-//        System.out.println("Tiempo de ejecucion en milisegundos: " + time/1000000);
 
         VentaController vc = new VentaController();
-        System.out.println(vc.mergeSort(vc.getVentas(), 0, "total").print());
-        Venta venta = vc.binaria(vc.getVentas(), "total", "350.0");
-        if(venta != null)
-            System.out.println(venta.toString());   
-        else System.out.println("Nulo");
-            
-
+        System.out.println(vc.quickSort(vc.getVentas(), 0, "fecha").print());
+        //System.out.println(vc.binaria(vc.getVentas(), "fecha", "1").print());
 
     }
 }
